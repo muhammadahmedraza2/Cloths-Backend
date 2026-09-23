@@ -1,67 +1,56 @@
 ﻿using System.Data;
+using ClothingErp.Api.Data;
 using CLOTHS_ERP.API.Dtos;
 using CLOTHS_ERP.API.Interfaces;
-using CLOTHS_ERP.API.Options;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
-namespace CLOTHS_ERP.API.Services;
+namespace CLOTHS_ERP.API.Repositories;
 
-public class MenuService : IMenuService
+public class MenuRepository : IMenuRepository
 {
-    private const string PcIdParameter = "@PC_ID";
+    private readonly AppDbContext _context;
 
-    private const string ColNodeId = "NODE_ID";
-    private const string ColDesp = "DESP";
-    private const string ColIcon = "ICON";
-
-    private const string ColFormTitle = "FORM_TITLE";
-    private const string ColSite = "SITE";
-    private const string ColFormId = "FORM_ID";
-
-    private readonly string _connectionString;
-    private readonly MenuOptions _options;
-
-    public MenuService(
-        IConfiguration configuration,
-        IOptions<MenuOptions> options)
+    public MenuRepository(AppDbContext context)
     {
-        _options = options.Value;
-
-        _connectionString =
-            configuration.GetConnectionString(
-                _options.ConnectionName)
-            ?? throw new InvalidOperationException(
-                $"Connection string '{_options.ConnectionName}' not found.");
+        _context = context;
     }
 
     public async Task<List<MenuNodeDto>> GetMenuAsync(
         int pcId,
         CancellationToken cancellationToken = default)
     {
-        var menu = new List<MenuNodeDto>();
+        var result = new List<MenuNodeDto>();
 
-        var nodesById =
-            new Dictionary<int, MenuNodeDto>();
-
-        await using var connection =
-            new SqlConnection(_connectionString);
-
-        await using var command =
-            new SqlCommand(
-                _options.StoredProcedure,
-                connection)
-            {
-                CommandType =
-                    CommandType.StoredProcedure
-            };
-
-        command.Parameters.Add(
-            PcIdParameter,
-            SqlDbType.Int).Value = pcId;
+        var connection =
+            _context.Database.GetDbConnection();
 
         await connection.OpenAsync(
             cancellationToken);
+
+        await using var command =
+            connection.CreateCommand();
+
+        command.CommandText =
+            "sp_Menu_GetAll";
+
+        command.CommandType =
+            CommandType.StoredProcedure;
+
+        var parameter =
+            command.CreateParameter();
+
+        parameter.ParameterName =
+            "@PC_ID";
+
+        parameter.DbType =
+            System.Data.DbType.Int32;
+
+        parameter.Value =
+            pcId;
+
+        command.Parameters.Add(parameter);
+
 
         await using var reader =
             await command.ExecuteReaderAsync(
@@ -73,21 +62,25 @@ public class MenuService : IMenuService
         // PC_ID | NODE_ID | DESP | ICON
         // =====================================================
 
+        var nodesById =
+            new Dictionary<int, MenuNodeDto>();
+
         var nodeIdOrdinal =
-            reader.GetOrdinal(ColNodeId);
+            reader.GetOrdinal("NODE_ID");
 
         var despOrdinal =
-            reader.GetOrdinal(ColDesp);
+            reader.GetOrdinal("DESP");
 
         var iconOrdinal =
-            reader.GetOrdinal(ColIcon);
+            reader.GetOrdinal("ICON");
 
 
         while (await reader.ReadAsync(
             cancellationToken))
         {
             var nodeId =
-                reader.GetInt32(nodeIdOrdinal);
+                Convert.ToInt32(
+                    reader[nodeIdOrdinal]);
 
             var node =
                 new MenuNodeDto
@@ -107,9 +100,7 @@ public class MenuService : IMenuService
 
             nodesById[nodeId] = node;
 
-            // IMPORTANT:
-            // Har node ko root menu mein add karna hai.
-            menu.Add(node);
+            result.Add(node);
         }
 
 
@@ -122,24 +113,24 @@ public class MenuService : IMenuService
             cancellationToken))
         {
             var titleOrdinal =
-                reader.GetOrdinal(ColFormTitle);
+                reader.GetOrdinal("FORM_TITLE");
 
             var siteOrdinal =
-                reader.GetOrdinal(ColSite);
+                reader.GetOrdinal("SITE");
 
             var formIdOrdinal =
-                reader.GetOrdinal(ColFormId);
+                reader.GetOrdinal("FORM_ID");
 
             var formNodeOrdinal =
-                reader.GetOrdinal(ColNodeId);
+                reader.GetOrdinal("NODE_ID");
 
 
             while (await reader.ReadAsync(
                 cancellationToken))
             {
                 var parentNodeId =
-                    reader.GetInt32(
-                        formNodeOrdinal);
+                    Convert.ToInt32(
+                        reader[formNodeOrdinal]);
 
 
                 if (!nodesById.TryGetValue(
@@ -151,8 +142,8 @@ public class MenuService : IMenuService
 
 
                 var formId =
-                    reader.GetInt32(
-                        formIdOrdinal);
+                    Convert.ToInt32(
+                        reader[formIdOrdinal]);
 
 
                 var title =
@@ -177,30 +168,12 @@ public class MenuService : IMenuService
                         Label = title,
 
                         Route =
-                            BuildRoute(
-                                site,
-                                formId)
+                            $"/app/{site}/{formId}"
                     });
             }
         }
 
 
-        return menu;
-    }
-
-
-    private string BuildRoute(
-        string site,
-        int formId)
-    {
-        return _options.RouteTemplate
-            .Replace(
-                "{site}",
-                site,
-                StringComparison.OrdinalIgnoreCase)
-            .Replace(
-                "{formId}",
-                formId.ToString(),
-                StringComparison.OrdinalIgnoreCase);
+        return result;
     }
 }

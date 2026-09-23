@@ -1,25 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace CLOTHS_ERP.API.Options;
 
-namespace CLOTHS_ERP.API.Options
+public class MenuOptions
 {
-    public class MenuOptions
-    {
-        public const string SectionName = "Menu";
+    public const string SectionName = "Menu";
 
-        /// <summary>Name of the entry under "ConnectionStrings".</summary>
-        [Required]
-        public string ConnectionName { get; set; } = string.Empty;
+    public string ConnectionName { get; set; } = "DefaultConnection";
 
-        /// <summary>Stored procedure that returns the menu (nodes + forms).</summary>
-        [Required]
-        public string StoredProcedure { get; set; } = string.Empty;
+    public string StoredProcedure { get; set; } = "sp_Menu_GetAll";
 
-        /// <summary>Route pattern for a form. Placeholders: {site}, {formId}.</summary>
-        [Required]
-        public string RouteTemplate { get; set; } = string.Empty;
+    public string RouteTemplate { get; set; } = "/app/{site}/{formId}";
 
-        /// <summary>Claim type in the user's token that carries the PC_ID (profile id).</summary>
-        [Required]
-        public string PcIdClaimType { get; set; } = string.Empty;
-    }
+    public string PcIdClaimType { get; set; } = "PcId";
 }

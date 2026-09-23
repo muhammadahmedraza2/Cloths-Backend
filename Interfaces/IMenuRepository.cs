@@ -2,9 +2,10 @@
 
 namespace CLOTHS_ERP.API.Interfaces;
 
-public interface IMenuService
+public interface IMenuRepository
 {
     Task<List<MenuNodeDto>> GetMenuAsync(
         int pcId,
         CancellationToken cancellationToken = default);
 }
+

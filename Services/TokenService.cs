@@ -1,5 +1,4 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 using ClothingErp.Api.Interfaces;
 using ClothingErp.Api.Models;
@@ -9,39 +8,75 @@ namespace ClothingErp.Api.Services;
 
 public class TokenService : ITokenService
 {
-    private readonly IConfiguration _config;
+    private readonly IConfiguration _configuration;
 
-    public TokenService(IConfiguration config)
+    public TokenService(IConfiguration configuration)
     {
-        _config = config;
+        _configuration = configuration;
     }
 
-    public (string token, DateTime expiresAt) GenerateToken(AppUser user)
+    public (string token, DateTime expiresAt)
+        GenerateToken(AppUser user)
     {
-        var jwtSection = _config.GetSection("JwtSettings");
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSection["SecretKey"]!));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var jwtSection =
+            _configuration.GetSection("JwtSettings");
 
-        var claims = new List<Claim>
-        {
-            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.Role, user.Role),
-            new("fullName", user.FullName),
-        };
+        var secretKey =
+            jwtSection["SecretKey"]
+            ?? throw new InvalidOperationException(
+                "JwtSettings:SecretKey is not configured.");
 
-        var expiryDays = double.Parse(jwtSection["ExpiryDays"] ?? "60");
-        var expiresAt = DateTime.UtcNow.AddDays(expiryDays);
+        var issuer =
+            jwtSection["Issuer"]
+            ?? throw new InvalidOperationException(
+                "JwtSettings:Issuer is not configured.");
 
-        var token = new JwtSecurityToken(
-            issuer: jwtSection["Issuer"],
-            audience: jwtSection["Audience"],
-            claims: claims,
-            expires: expiresAt,
-            signingCredentials: creds
+        var audience =
+            jwtSection["Audience"]
+            ?? throw new InvalidOperationException(
+                "JwtSettings:Audience is not configured.");
+
+        var expiryDays =
+            jwtSection.GetValue<int>("ExpiryDays");
+
+        var expiresAt =
+            DateTime.UtcNow.AddDays(expiryDays);
+
+        var claims =
+            new List<System.Security.Claims.Claim>
+            {
+                new System.Security.Claims.Claim(
+                    System.Security.Claims.ClaimTypes.Name,
+                    user.Username),
+
+                new System.Security.Claims.Claim(
+                    "PcId",
+                    user.PcId.ToString())
+            };
+
+        var key =
+            new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(secretKey));
+
+        var credentials =
+            new SigningCredentials(
+                key,
+                SecurityAlgorithms.HmacSha256);
+
+        var token =
+            new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                expires: expiresAt,
+                signingCredentials: credentials);
+
+        return
+        (
+            new JwtSecurityTokenHandler()
+                .WriteToken(token),
+
+            expiresAt
         );
-
-        return (new JwtSecurityTokenHandler().WriteToken(token), expiresAt);
     }
 }

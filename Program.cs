@@ -79,7 +79,7 @@ builder.Services
     .ValidateOnStart();
 
 // ===============================================================
-// Repository
+// Generic Repository
 // ===============================================================
 
 builder.Services.AddScoped(
@@ -101,6 +101,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICheckoutService, CheckoutService>();
+
+// Menu Service
 builder.Services.AddScoped<IMenuService, MenuService>();
 
 // ===============================================================
@@ -134,6 +136,10 @@ builder.Services
                         Encoding.UTF8.GetBytes(jwtSecretKey))
             };
     });
+
+// ===============================================================
+// Authorization
+// ===============================================================
 
 builder.Services.AddAuthorization();
 

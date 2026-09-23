@@ -4,5 +4,6 @@ namespace ClothingErp.Api.Interfaces;
 
 public interface ITokenService
 {
-    (string token, DateTime expiresAt) GenerateToken(AppUser user);
+    (string token, DateTime expiresAt)
+        GenerateToken(AppUser user);
 }

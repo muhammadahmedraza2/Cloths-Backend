@@ -11,22 +11,38 @@ public class AuthService : IAuthService
     private readonly IPasswordHasher _hasher;
     private readonly ITokenService _tokens;
 
-    public AuthService(IRepository<AppUser> users, IPasswordHasher hasher, ITokenService tokens)
+    public AuthService(
+        IRepository<AppUser> users,
+        IPasswordHasher hasher,
+        ITokenService tokens)
     {
         _users = users;
         _hasher = hasher;
         _tokens = tokens;
     }
 
-    public async Task<LoginResponseDto?> LoginAsync(string username, string password)
+
+    // =========================================================
+    // LOGIN
+    // =========================================================
+    public async Task<LoginResponseDto?> LoginAsync(
+        string username,
+        string password)
     {
-        var user = await _users.FirstOrDefaultAsync(u => u.Username == username);
-        if (user is null || !_hasher.Verify(password, user.PasswordHash))
+        var user =
+            await _users.FirstOrDefaultAsync(
+                u => u.Username == username);
+
+        if (user is null ||
+            !_hasher.Verify(
+                password,
+                user.PasswordHash))
         {
             return null;
         }
 
-        var (token, expiresAt) = _tokens.GenerateToken(user);
+        var (token, expiresAt) =
+            _tokens.GenerateToken(user);
 
         return new LoginResponseDto
         {
@@ -35,6 +51,59 @@ public class AuthService : IAuthService
             FullName = user.FullName,
             Role = user.Role,
             ExpiresAt = expiresAt
+        };
+    }
+
+
+    // =========================================================
+    // REGISTER
+    // =========================================================
+    public async Task<RegisterResponseDto> RegisterAsync(
+        RegisterRequestDto dto)
+    {
+        // Check duplicate username
+        var existingUser =
+            await _users.FirstOrDefaultAsync(
+                u => u.Username == dto.Username);
+
+        if (existingUser is not null)
+        {
+            return new RegisterResponseDto
+            {
+                IsSuccess = false,
+                Message = "Username already exists."
+            };
+        }
+
+
+        // Create new user
+        var user = new AppUser
+        {
+            Username = dto.Username.Trim(),
+
+            FullName = dto.FullName.Trim(),
+
+            Role = string.IsNullOrWhiteSpace(dto.Role)
+                ? "User"
+                : dto.Role.Trim(),
+
+            PcId = dto.PcId,
+
+            PasswordHash =
+                _hasher.Hash(dto.Password)
+        };
+
+
+        // Save user
+        await _users.AddAsync(user);
+
+        await _users.SaveChangesAsync();
+
+
+        return new RegisterResponseDto
+        {
+            IsSuccess = true,
+            Message = "User registered successfully."
         };
     }
 }
