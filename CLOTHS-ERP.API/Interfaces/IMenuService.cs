@@ -1,9 +1,10 @@
 ﻿using CLOTHS_ERP.API.Dtos;
 
-namespace CLOTHS_ERP.API.Interfaces
+namespace CLOTHS_ERP.API.Interfaces;
+
+public interface IMenuService
 {
-    public interface IMenuService
-    {
-        Task<List<MenuNodeDto>> GetMenuAsync(int pcId, CancellationToken cancellationToken = default);
-    }
+    Task<List<MenuNodeDto>> GetMenuAsync(
+        int pcId,
+        CancellationToken cancellationToken = default);
 }

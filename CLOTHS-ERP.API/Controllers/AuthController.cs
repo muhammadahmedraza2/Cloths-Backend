@@ -11,22 +11,30 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
 
-    public AuthController(IAuthService authService)
+    public AuthController(
+        IAuthService authService)
     {
         _authService = authService;
     }
 
-    /// <summary>
-    /// Seeded demo user: username "admin", password "Admin@123".
-    /// </summary>
     [HttpPost("login")]
-    public async Task<ActionResult<LoginResponseDto>> Login(LoginRequestDto dto)
+    public async Task<ActionResult<LoginResponseDto>> Login(
+        LoginRequestDto dto)
     {
-        var result = await _authService.LoginAsync(dto.Username, dto.Password);
+        var result =
+            await _authService.LoginAsync(
+                dto.Username,
+                dto.Password);
+
         if (result is null)
         {
-            return Unauthorized(new { message = "Invalid username or password." });
+            return Unauthorized(new
+            {
+                message =
+                    "Invalid username or password."
+            });
         }
+
         return Ok(result);
     }
 }

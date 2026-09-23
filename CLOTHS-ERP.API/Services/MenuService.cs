@@ -5,95 +5,186 @@ using CLOTHS_ERP.API.Options;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 
-namespace CLOTHS_ERP.API.Services
+namespace CLOTHS_ERP.API.Services;
+
+public class MenuService : IMenuService
 {
-    public class MenuService : IMenuService
+    private const string PcIdParameter = "@PC_ID";
+
+    private const string ColNodeId = "NODE_ID";
+    private const string ColDesp = "DESP";
+    private const string ColIcon = "ICON";
+
+    private const string ColFormTitle = "FORM_TITLE";
+    private const string ColSite = "SITE";
+    private const string ColFormId = "FORM_ID";
+
+    private readonly string _connectionString;
+    private readonly MenuOptions _options;
+
+    public MenuService(
+        IConfiguration configuration,
+        IOptions<MenuOptions> options)
     {
-        // SP contract (parameter + column names). These must match the stored procedure.
-        private const string PcIdParameter = "@PC_ID";
+        _options = options.Value;
 
-        private const string ColNodeId = "NODE_ID";
-        private const string ColDesp = "DESP";
-        private const string ColIcon = "ICON";
-        private const string ColFormTitle = "FORM_TITLE";
-        private const string ColSite = "SITE";
-        private const string ColFormId = "FORM_ID";
+        _connectionString =
+            configuration.GetConnectionString(
+                _options.ConnectionName)
+            ?? throw new InvalidOperationException(
+                $"Connection string '{_options.ConnectionName}' not found.");
+    }
 
-        private readonly string _connectionString;
-        private readonly MenuOptions _options;
+    public async Task<List<MenuNodeDto>> GetMenuAsync(
+        int pcId,
+        CancellationToken cancellationToken = default)
+    {
+        var menu = new List<MenuNodeDto>();
 
-        public MenuService(IConfiguration configuration, IOptions<MenuOptions> options)
-        {
-            _options = options.Value;
+        var nodesById =
+            new Dictionary<int, MenuNodeDto>();
 
-            _connectionString = configuration.GetConnectionString(_options.ConnectionName)
-                ?? throw new InvalidOperationException(
-                    $"Connection string '{_options.ConnectionName}' not found.");
-        }
+        await using var connection =
+            new SqlConnection(_connectionString);
 
-        public async Task<List<MenuNodeDto>> GetMenuAsync(int pcId, CancellationToken cancellationToken = default)
-        {
-            var menu = new List<MenuNodeDto>();
-            var nodesById = new Dictionary<int, MenuNodeDto>();
-
-            await using var conn = new SqlConnection(_connectionString);
-            await using var cmd = new SqlCommand(_options.StoredProcedure, conn)
+        await using var command =
+            new SqlCommand(
+                _options.StoredProcedure,
+                connection)
             {
                 CommandType = CommandType.StoredProcedure
             };
-            cmd.Parameters.Add(PcIdParameter, SqlDbType.Int).Value = pcId;
 
-            await conn.OpenAsync(cancellationToken);
-            await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        command.Parameters.Add(
+            PcIdParameter,
+            SqlDbType.Int).Value = pcId;
 
-            // ---------- Result set 1: menu nodes ("Table") ----------
-            var nodeIdOrd = reader.GetOrdinal(ColNodeId);
-            var despOrd = reader.GetOrdinal(ColDesp);
-            var iconOrd = reader.GetOrdinal(ColIcon);
+        await connection.OpenAsync(
+            cancellationToken);
 
-            while (await reader.ReadAsync(cancellationToken))
-            {
-                var node = new MenuNodeDto
+        await using var reader =
+            await command.ExecuteReaderAsync(
+                cancellationToken);
+
+        // =========================================================
+        // RESULT SET 1
+        // PC_ID | NODE_ID | DESP | ICON
+        // =========================================================
+
+        var nodeIdOrdinal =
+            reader.GetOrdinal(ColNodeId);
+
+        var despOrdinal =
+            reader.GetOrdinal(ColDesp);
+
+        var iconOrdinal =
+            reader.GetOrdinal(ColIcon);
+
+        while (await reader.ReadAsync(
+            cancellationToken))
+        {
+            var nodeId =
+                reader.GetInt32(nodeIdOrdinal);
+
+            var node =
+                new MenuNodeDto
                 {
-                    Label = reader.GetString(despOrd),
-                    Icon = reader.IsDBNull(iconOrd) ? null : reader.GetString(iconOrd)
+                    Id = nodeId,
+
+                    Label =
+                        reader.IsDBNull(despOrdinal)
+                            ? string.Empty
+                            : reader.GetString(despOrdinal),
+
+                    Icon =
+                        reader.IsDBNull(iconOrdinal)
+                            ? null
+                            : reader.GetString(iconOrdinal)
                 };
 
-                nodesById[reader.GetInt32(nodeIdOrd)] = node;
-                menu.Add(node); // order comes from the SP (SortOrder)
-            }
+            nodesById[nodeId] = node;
 
-            // ---------- Result set 2: forms under each node ("Table1") ----------
-            if (await reader.NextResultAsync(cancellationToken))
-            {
-                var titleOrd = reader.GetOrdinal(ColFormTitle);
-                var siteOrd = reader.GetOrdinal(ColSite);
-                var formIdOrd = reader.GetOrdinal(ColFormId);
-                var fNodeOrd = reader.GetOrdinal(ColNodeId);
-
-                while (await reader.ReadAsync(cancellationToken))
-                {
-                    if (!nodesById.TryGetValue(reader.GetInt32(fNodeOrd), out var parent))
-                        continue;
-
-                    var formId = reader.GetInt32(formIdOrd);
-                    var site = reader.GetString(siteOrd);
-
-                    parent.Children.Add(new MenuNodeDto
-                    {
-                        Label = reader.GetString(titleOrd),
-                        FormId = formId,
-                        Route = BuildRoute(site, formId)
-                    });
-                }
-            }
-
-            return menu;
+            menu.Add(node);
         }
 
-        private string BuildRoute(string site, int formId) =>
-            _options.RouteTemplate
-                .Replace("{site}", site, StringComparison.OrdinalIgnoreCase)
-                .Replace("{formId}", formId.ToString(), StringComparison.OrdinalIgnoreCase);
+        // =========================================================
+        // RESULT SET 2
+        // FORM_TITLE | SITE | FORM_ID | NODE_ID
+        // =========================================================
+
+        if (await reader.NextResultAsync(
+            cancellationToken))
+        {
+            var titleOrdinal =
+                reader.GetOrdinal(ColFormTitle);
+
+            var siteOrdinal =
+                reader.GetOrdinal(ColSite);
+
+            var formIdOrdinal =
+                reader.GetOrdinal(ColFormId);
+
+            var formNodeOrdinal =
+                reader.GetOrdinal(ColNodeId);
+
+            while (await reader.ReadAsync(
+                cancellationToken))
+            {
+                var parentNodeId =
+                    reader.GetInt32(formNodeOrdinal);
+
+                if (!nodesById.TryGetValue(
+                    parentNodeId,
+                    out var parent))
+                {
+                    continue;
+                }
+
+                var formId =
+                    reader.GetInt32(formIdOrdinal);
+
+                var title =
+                    reader.IsDBNull(titleOrdinal)
+                        ? string.Empty
+                        : reader.GetString(titleOrdinal);
+
+                var site =
+                    reader.IsDBNull(siteOrdinal)
+                        ? string.Empty
+                        : reader.GetString(siteOrdinal);
+
+                parent.Children.Add(
+                    new MenuNodeDto
+                    {
+                        Id = formId,
+
+                        FormId = formId,
+
+                        Label = title,
+
+                        Route =
+                            BuildRoute(
+                                site,
+                                formId)
+                    });
+            }
+        }
+
+        return menu;
+    }
+
+    private string BuildRoute(
+        string site,
+        int formId)
+    {
+        return _options.RouteTemplate
+            .Replace(
+                "{site}",
+                site,
+                StringComparison.OrdinalIgnoreCase)
+            .Replace(
+                "{formId}",
+                formId.ToString(),
+                StringComparison.OrdinalIgnoreCase);
     }
 }
