@@ -35,17 +35,19 @@ public class MenuController : ControllerBase
         {
             return Unauthorized(new
             {
-                message = "PcId claim is missing from JWT token."
+                message =
+                    "PcId claim is missing from JWT token."
             });
         }
 
         if (!int.TryParse(
-            pcIdValue,
-            out var pcId))
+                pcIdValue,
+                out var pcId))
         {
             return Unauthorized(new
             {
-                message = "Invalid PcId in JWT token."
+                message =
+                    "Invalid PcId in JWT token."
             });
         }
 

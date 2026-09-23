@@ -17,6 +17,10 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
+    // =========================================================
+    // LOGIN
+    // POST: /api/Auth/login
+    // =========================================================
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponseDto>> Login(
         LoginRequestDto dto)
@@ -36,5 +40,31 @@ public class AuthController : ControllerBase
         }
 
         return Ok(result);
+    }
+
+
+    // =========================================================
+    // REGISTER
+    // POST: /api/Auth/register
+    // =========================================================
+    [HttpPost("register")]
+    public async Task<ActionResult> Register(
+        RegisterRequestDto dto)
+    {
+        var result =
+            await _authService.RegisterAsync(dto);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(new
+            {
+                message = result.Message
+            });
+        }
+
+        return Ok(new
+        {
+            message = result.Message
+        });
     }
 }

@@ -1,4 +1,5 @@
-﻿namespace CLOTHS_ERP.API.Dtos;
+﻿
+namespace CLOTHS_ERP.API.Dtos;
 
 public class MenuNodeDto
 {
@@ -14,3 +15,4 @@ public class MenuNodeDto
 
     public List<MenuNodeDto> Children { get; set; } = new();
 }
+

@@ -1,9 +1,15 @@
-﻿using ClothingErp.Api.Dtos;
+﻿
+using ClothingErp.Api.Dtos;
 using CLOTHS_ERP.API.Dtos;
 
 namespace ClothingErp.Api.Interfaces;
 
 public interface IAuthService
 {
-    Task<LoginResponseDto?> LoginAsync(string username, string password);
+    Task<LoginResponseDto?> LoginAsync(
+        string username,
+        string password);
+
+    Task<RegisterResponseDto> RegisterAsync(
+        RegisterRequestDto dto);
 }

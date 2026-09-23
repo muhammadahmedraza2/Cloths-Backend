@@ -52,7 +52,8 @@ public class MenuService : IMenuService
                 _options.StoredProcedure,
                 connection)
             {
-                CommandType = CommandType.StoredProcedure
+                CommandType =
+                    CommandType.StoredProcedure
             };
 
         command.Parameters.Add(
@@ -66,10 +67,11 @@ public class MenuService : IMenuService
             await command.ExecuteReaderAsync(
                 cancellationToken);
 
-        // =========================================================
+
+        // =====================================================
         // RESULT SET 1
         // PC_ID | NODE_ID | DESP | ICON
-        // =========================================================
+        // =====================================================
 
         var nodeIdOrdinal =
             reader.GetOrdinal(ColNodeId);
@@ -79,6 +81,7 @@ public class MenuService : IMenuService
 
         var iconOrdinal =
             reader.GetOrdinal(ColIcon);
+
 
         while (await reader.ReadAsync(
             cancellationToken))
@@ -104,13 +107,16 @@ public class MenuService : IMenuService
 
             nodesById[nodeId] = node;
 
+            // IMPORTANT:
+            // Har node ko root menu mein add karna hai.
             menu.Add(node);
         }
 
-        // =========================================================
+
+        // =====================================================
         // RESULT SET 2
         // FORM_TITLE | SITE | FORM_ID | NODE_ID
-        // =========================================================
+        // =====================================================
 
         if (await reader.NextResultAsync(
             cancellationToken))
@@ -127,11 +133,14 @@ public class MenuService : IMenuService
             var formNodeOrdinal =
                 reader.GetOrdinal(ColNodeId);
 
+
             while (await reader.ReadAsync(
                 cancellationToken))
             {
                 var parentNodeId =
-                    reader.GetInt32(formNodeOrdinal);
+                    reader.GetInt32(
+                        formNodeOrdinal);
+
 
                 if (!nodesById.TryGetValue(
                     parentNodeId,
@@ -140,18 +149,23 @@ public class MenuService : IMenuService
                     continue;
                 }
 
+
                 var formId =
-                    reader.GetInt32(formIdOrdinal);
+                    reader.GetInt32(
+                        formIdOrdinal);
+
 
                 var title =
                     reader.IsDBNull(titleOrdinal)
                         ? string.Empty
                         : reader.GetString(titleOrdinal);
 
+
                 var site =
                     reader.IsDBNull(siteOrdinal)
                         ? string.Empty
                         : reader.GetString(siteOrdinal);
+
 
                 parent.Children.Add(
                     new MenuNodeDto
@@ -170,8 +184,10 @@ public class MenuService : IMenuService
             }
         }
 
+
         return menu;
     }
+
 
     private string BuildRoute(
         string site,
