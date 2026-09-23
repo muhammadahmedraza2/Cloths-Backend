@@ -151,7 +151,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // ===============================================================
-// CORS
+// CORSsss
 // ===============================================================
 
 builder.Services.AddCors(options =>
