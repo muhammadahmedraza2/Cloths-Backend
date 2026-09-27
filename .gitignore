@@ -1,0 +1,44 @@
+# Visual Studio
+.vs/
+.vscode/
+
+# .NET Build Files
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+
+# Logs
+*.log
+
+# Test Results
+TestResults/
+*.trx
+
+# Environment / Local Secrets
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+
+# Local Database Files
+*.mdf
+*.ldf
+*.ndf
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Publish
+publish/
