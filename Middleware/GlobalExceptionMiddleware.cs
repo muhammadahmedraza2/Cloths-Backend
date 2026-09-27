@@ -7,29 +7,84 @@ public class GlobalExceptionMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<GlobalExceptionMiddleware> _logger;
+    private readonly IWebHostEnvironment _environment;
 
-    public GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExceptionMiddleware> logger)
+    public GlobalExceptionMiddleware(
+        RequestDelegate next,
+        ILogger<GlobalExceptionMiddleware> logger,
+        IWebHostEnvironment environment)
     {
-        _next = next; _logger = logger;
+        _next = next;
+        _logger = logger;
+        _environment = environment;
     }
 
     public async Task InvokeAsync(HttpContext context)
     {
-        try { await _next(context); }
-        catch (KeyNotFoundException ex) { await WriteAsync(context, 404, ex.Message); }
-        catch (InvalidOperationException ex) { await WriteAsync(context, 400, ex.Message); }
+        try
+        {
+            await _next(context);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Resource not found.");
+
+            await WriteAsync(
+                context,
+                StatusCodes.Status404NotFound,
+                ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(
+                ex,
+                "Invalid operation.");
+
+            await WriteAsync(
+                context,
+                StatusCodes.Status400BadRequest,
+                ex.Message);
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled API exception.");
-            await WriteAsync(context, 500, "Something went wrong.");
+            _logger.LogError(
+                ex,
+                "Unhandled API exception.");
+
+            var message =
+                _environment.IsDevelopment()
+                    ? ex.Message
+                    : "Something went wrong.";
+
+            await WriteAsync(
+                context,
+                StatusCodes.Status500InternalServerError,
+                message);
         }
     }
 
-    private static async Task WriteAsync(HttpContext context, int status, string message)
+    private static async Task WriteAsync(
+        HttpContext context,
+        int status,
+        string message)
     {
+        if (context.Response.HasStarted)
+        {
+            return;
+        }
+
         context.Response.StatusCode = status;
         context.Response.ContentType = "application/json";
-        var body = new ApiResponse<object> { Success = false, Message = message };
-        await context.Response.WriteAsync(JsonSerializer.Serialize(body));
+
+        var body = new ApiResponse<object>
+        {
+            Success = false,
+            Message = message
+        };
+
+        await context.Response.WriteAsync(
+            JsonSerializer.Serialize(body));
     }
 }

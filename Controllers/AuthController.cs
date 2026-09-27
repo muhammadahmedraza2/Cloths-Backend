@@ -1,5 +1,6 @@
+using System.Security.Claims;
 using ClothingErp.Api.Dtos;
-using ClothingErp.Api.Services;
+using CLOTHS_ERP.API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,41 +12,139 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _auth;
 
-    public AuthController(IAuthService auth) => _auth = auth;
-
-    [AllowAnonymous]
-    [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterRequestDto dto)
+    public AuthController(IAuthService auth)
     {
-        var result = await _auth.RegisterAsync(dto);
-        return result.Success ? Ok(new ApiResponse<LoginResponseDto> { Success = true, Message = result.Message, Data = result.Data })
-            : BadRequest(new ApiResponse<object> { Success = false, Message = result.Message });
+        _auth = auth;
     }
+
+    // =========================================================
+    // ADMIN LOGIN
+    // =========================================================
 
     [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginRequestDto dto)
+    public async Task<IActionResult> Login(
+        LoginRequestDto dto)
     {
-        var result = await _auth.LoginAsync(dto);
-        return result.Success ? Ok(new ApiResponse<LoginResponseDto> { Success = true, Message = result.Message, Data = result.Data })
-            : Unauthorized(new ApiResponse<object> { Success = false, Message = result.Message });
+        var result =
+            await _auth.LoginAsync(dto);
+
+        if (!result.Success)
+        {
+            return Unauthorized(
+                new ApiResponse<object>
+                {
+                    Success = false,
+                    Message = result.Message
+                });
+        }
+
+        return Ok(
+            new ApiResponse<LoginResponseDto>
+            {
+                Success = true,
+                Message = result.Message,
+                Data = result.Data
+            });
     }
+
+
+    // =========================================================
+    // ADMIN CREATE USER
+    // =========================================================
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("users")]
+    public async Task<IActionResult> CreateUser(
+        RegisterRequestDto dto)
+    {
+        var result =
+            await _auth.RegisterAsync(dto);
+
+        if (!result.Success)
+        {
+            return BadRequest(
+                new ApiResponse<object>
+                {
+                    Success = false,
+                    Message = result.Message
+                });
+        }
+
+        return Ok(
+            new ApiResponse<LoginResponseDto>
+            {
+                Success = true,
+                Message = result.Message,
+                Data = result.Data
+            });
+    }
+
+
+    // =========================================================
+    // REFRESH TOKEN
+    // =========================================================
 
     [AllowAnonymous]
     [HttpPost("refresh")]
-    public async Task<IActionResult> Refresh(RefreshTokenRequestDto dto)
+    public async Task<IActionResult> Refresh(
+        RefreshTokenRequestDto dto)
     {
-        var result = await _auth.RefreshAsync(dto);
-        return result.Success ? Ok(new ApiResponse<LoginResponseDto> { Success = true, Message = result.Message, Data = result.Data })
-            : Unauthorized(new ApiResponse<object> { Success = false, Message = result.Message });
+        var result =
+            await _auth.RefreshAsync(dto);
+
+        if (!result.Success)
+        {
+            return Unauthorized(
+                new ApiResponse<object>
+                {
+                    Success = false,
+                    Message = result.Message
+                });
+        }
+
+        return Ok(
+            new ApiResponse<LoginResponseDto>
+            {
+                Success = true,
+                Message = result.Message,
+                Data = result.Data
+            });
     }
 
-    [Authorize]
+
+    // =========================================================
+    // LOGOUT
+    // =========================================================
+
+    [Authorize(Roles = "Admin")]
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        var id = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
-        await _auth.LogoutAsync(id);
-        return Ok(new ApiResponse<object> { Success = true, Message = "Logged out successfully." });
+        var claim =
+            User.FindFirst(
+                ClaimTypes.NameIdentifier);
+
+        if (claim is null ||
+            !Guid.TryParse(
+                claim.Value,
+                out var userId))
+        {
+            return Unauthorized(
+                new ApiResponse<object>
+                {
+                    Success = false,
+                    Message = "Invalid admin token."
+                });
+        }
+
+        await _auth.LogoutAsync(userId);
+
+        return Ok(
+            new ApiResponse<object>
+            {
+                Success = true,
+                Message = "Logged out successfully."
+            });
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using CLOTHS_ERP.API.Dtos;
 using CLOTHS_ERP.API.Interfaces;
 using CLOTHS_ERP.API.Options;
 using Microsoft.AspNetCore.Authorization;
@@ -25,16 +24,11 @@ public class MenuController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetMenu(
+    public async Task<IActionResult> GetMenu(
         CancellationToken cancellationToken)
     {
-        var pcIdValue =
-            User.FindFirst(
-                _options.PcIdClaimType)?.Value;
-
-        var role =
-            User.FindFirst(
-                ClaimTypes.Role)?.Value;
+        var pcIdValue = User.FindFirst(
+            _options.PcIdClaimType)?.Value;
 
         if (string.IsNullOrWhiteSpace(pcIdValue))
         {
@@ -44,15 +38,17 @@ public class MenuController : ControllerBase
             });
         }
 
-        if (!int.TryParse(
-            pcIdValue,
-            out var pcId))
+        if (!int.TryParse(pcIdValue, out var pcId) || pcId <= 0)
         {
             return Unauthorized(new
             {
                 message = "Invalid PcId."
             });
         }
+
+        var role =
+            User.FindFirst(ClaimTypes.Role)?.Value
+            ?? User.FindFirst("role")?.Value;
 
         if (string.IsNullOrWhiteSpace(role))
         {
@@ -62,11 +58,10 @@ public class MenuController : ControllerBase
             });
         }
 
-        var menu =
-            await _menuService.GetMenuAsync(
-                pcId,
-                role,
-                cancellationToken);
+        var menu = await _menuService.GetMenuAsync(
+            pcId,
+            role,
+            cancellationToken);
 
         return Ok(new
         {

@@ -1,6 +1,6 @@
 namespace ClothingErp.Api.Models;
 
-public enum Gender { Unisex = 0, Boy = 1, Girl = 2 }
+public enum Gender { Unisex = 0, Boy = 1, Girl = 2, Man = 3, Woman = 4 }
 public enum PaymentMethod { CashOnDelivery = 0, Cash = 0, Card = 1, OnlineBankTransfer = 2, Bank = 2 }
 public enum PaymentStatus { Pending = 0, Paid = 1, Failed = 2, Cancelled = 3, Refunded = 4 }
 public enum OrderStatus { Pending = 0, Confirmed = 1, Processing = 2, Packed = 3, Shipped = 4, Delivered = 5, Cancelled = 6, Returned = 7 }
@@ -56,6 +56,25 @@ public class AgeGroup
     public ICollection<Product> Products { get; set; } = new List<Product>();
 }
 
+/// <summary>Top-level shop grouping: Baby, Kids, Teens, Men, Women, Newborn, Winter, Summer.</summary>
+public class Department
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string Name { get; set; } = string.Empty;
+    public bool IsActive { get; set; } = true;
+    public ICollection<Product> Products { get; set; } = new List<Product>();
+}
+
+/// <summary>Single Piece, 2-Piece, 3-Piece, 4-Piece, Complete Set, etc.</summary>
+public class SetType
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public string Name { get; set; } = string.Empty;
+    public int PieceCount { get; set; } = 1;
+    public bool IsActive { get; set; } = true;
+    public ICollection<Product> Products { get; set; } = new List<Product>();
+}
+
 public class Product
 {
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -69,6 +88,12 @@ public class Product
     public Gender Gender { get; set; } = Gender.Unisex;
     public Guid? AgeGroupId { get; set; }
     public AgeGroup? AgeGroup { get; set; }
+    public Guid? DepartmentId { get; set; }
+    public Department? Department { get; set; }
+    public Guid? SetTypeId { get; set; }
+    public SetType? SetType { get; set; }
+    /// <summary>e.g. "Shirt + Trouser + Dupatta"</summary>
+    public string? SetIncludes { get; set; }
     public string? Fabric { get; set; }
     public string? Season { get; set; }
     public decimal PurchasePrice { get; set; }
@@ -135,7 +160,6 @@ public class CartItem
     public decimal UnitPrice { get; set; }
     public DateTime AddedAt { get; set; } = DateTime.UtcNow;
 
-    // Legacy fields retained so the existing Angular cart contract does not break.
     public Guid UserId { get; set; }
     public AppUser? User { get; set; }
     public string ProductId { get; set; } = string.Empty;
@@ -194,7 +218,6 @@ public class OrderItem
     public decimal UnitPrice { get; set; }
     public decimal TotalPrice { get; set; }
 
-    // Legacy aliases for the existing frontend contract.
     public string ProductId { get => ProductVariantId.ToString(); set { if (Guid.TryParse(value, out var id)) ProductVariantId = id; } }
     public string Name { get => ProductName; set => ProductName = value; }
     public decimal Price { get => UnitPrice; set => UnitPrice = value; }
@@ -280,7 +303,6 @@ public class Invoice
     public string Status { get; set; } = "Issued";
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
-
 
 public class PaymentProof
 {

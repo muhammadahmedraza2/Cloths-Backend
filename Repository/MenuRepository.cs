@@ -56,7 +56,7 @@ public class MenuRepository : IMenuRepository
 
         // =====================================================
         // RESULT SET 1
-        // NODE_ID | DESP | ICON
+        // PC_ID | NODE_ID | DESP | ICON
         // =====================================================
 
         var nodeIdOrdinal =
@@ -68,8 +68,7 @@ public class MenuRepository : IMenuRepository
         var iconOrdinal =
             reader.GetOrdinal("ICON");
 
-        while (await reader.ReadAsync(
-            cancellationToken))
+        while (await reader.ReadAsync(cancellationToken))
         {
             var nodeId =
                 Convert.ToInt32(
@@ -102,8 +101,7 @@ public class MenuRepository : IMenuRepository
         // FORM_TITLE | SITE | FORM_ID | NODE_ID
         // =====================================================
 
-        if (await reader.NextResultAsync(
-            cancellationToken))
+        if (await reader.NextResultAsync(cancellationToken))
         {
             var titleOrdinal =
                 reader.GetOrdinal("FORM_TITLE");
@@ -117,8 +115,7 @@ public class MenuRepository : IMenuRepository
             var formNodeOrdinal =
                 reader.GetOrdinal("NODE_ID");
 
-            while (await reader.ReadAsync(
-                cancellationToken))
+            while (await reader.ReadAsync(cancellationToken))
             {
                 var parentNodeId =
                     Convert.ToInt32(
@@ -126,7 +123,7 @@ public class MenuRepository : IMenuRepository
 
                 if (!nodesById.TryGetValue(
                     parentNodeId,
-                    out var parent))
+                    out var parentNode))
                 {
                     continue;
                 }
@@ -147,7 +144,7 @@ public class MenuRepository : IMenuRepository
                         : Convert.ToString(
                             reader[siteOrdinal]) ?? string.Empty;
 
-                parent.Children.Add(
+                parentNode.Children.Add(
                     new MenuNodeDto
                     {
                         Id = formId,

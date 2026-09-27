@@ -1,9 +1,7 @@
-using ClothingErp.Api.Dtos;
 using ClothingErp.Api.Models;
 using ClothingErp.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ClothingErp.Api.Controllers;
 
@@ -11,27 +9,151 @@ namespace ClothingErp.Api.Controllers;
 [Route("api/catalog")]
 public class CatalogController : ControllerBase
 {
-    private readonly ClothingErp.Api.Data.AppDbContext _db;
     private readonly EcommerceService _service;
-    public CatalogController(ClothingErp.Api.Data.AppDbContext db, EcommerceService service) { _db = db; _service = service; }
+
+    public CatalogController(EcommerceService service)
+    {
+        _service = service;
+    }
+
+    // =========================================================
+    // PRODUCTS
+    // =========================================================
 
     [AllowAnonymous]
     [HttpGet("products")]
-    public async Task<IActionResult> Products([FromQuery] string? search, [FromQuery] Guid? categoryId, [FromQuery] Guid? ageGroupId, [FromQuery] Guid? sizeId, [FromQuery] Guid? colorId)
-        => Ok(await _service.GetProductsAsync(search, categoryId, ageGroupId, sizeId, colorId));
+    public async Task<IActionResult> Products(
+        [FromQuery] string? search,
+        [FromQuery] Guid? departmentId,
+        [FromQuery] Guid? categoryId,
+        [FromQuery] Gender? gender,
+        [FromQuery] Guid? ageGroupId,
+        [FromQuery] Guid? sizeId,
+        [FromQuery] Guid? colorId,
+        [FromQuery] Guid? setTypeId)
+    {
+        var result =
+            await _service.GetProductsAsync(
+                search,
+                departmentId,
+                categoryId,
+                gender,
+                ageGroupId,
+                sizeId,
+                colorId,
+                setTypeId);
+
+        return Ok(result);
+    }
 
     [AllowAnonymous]
     [HttpGet("products/{id:guid}")]
-    public async Task<IActionResult> Product(Guid id) => (await _service.GetProductAsync(id)) is { } p ? Ok(p) : NotFound();
+    public async Task<IActionResult> Product(Guid id)
+    {
+        var product =
+            await _service.GetProductAsync(id);
+
+        if (product is null)
+            return NotFound();
+
+        return Ok(product);
+    }
+
+    // =========================================================
+    // CATEGORIES
+    // =========================================================
 
     [AllowAnonymous]
-    [HttpGet("categories")] public async Task<IActionResult> Categories() => Ok(await _db.Categories.AsNoTracking().Where(x => x.IsActive).OrderBy(x => x.Name).ToListAsync());
+    [HttpGet("categories")]
+    public async Task<IActionResult> Categories()
+    {
+        var result =
+            await _service.GetCategoriesAsync();
+
+        return Ok(result);
+    }
+
+    // =========================================================
+    // BRANDS
+    // =========================================================
+
     [AllowAnonymous]
-    [HttpGet("brands")] public async Task<IActionResult> Brands() => Ok(await _db.Brands.AsNoTracking().Where(x => x.IsActive).OrderBy(x => x.Name).ToListAsync());
+    [HttpGet("brands")]
+    public async Task<IActionResult> Brands()
+    {
+        var result =
+            await _service.GetBrandsAsync();
+
+        return Ok(result);
+    }
+
+    // =========================================================
+    // SIZES
+    // =========================================================
+
     [AllowAnonymous]
-    [HttpGet("sizes")] public async Task<IActionResult> Sizes() => Ok(await _db.Sizes.AsNoTracking().Where(x => x.IsActive).OrderBy(x => x.Name).ToListAsync());
+    [HttpGet("sizes")]
+    public async Task<IActionResult> Sizes()
+    {
+        var result =
+            await _service.GetSizesAsync();
+
+        return Ok(result);
+    }
+
+    // =========================================================
+    // COLORS
+    // =========================================================
+
     [AllowAnonymous]
-    [HttpGet("colors")] public async Task<IActionResult> Colors() => Ok(await _db.Colors.AsNoTracking().Where(x => x.IsActive).OrderBy(x => x.Name).ToListAsync());
+    [HttpGet("colors")]
+    public async Task<IActionResult> Colors()
+    {
+        var result =
+            await _service.GetColorsAsync();
+
+        return Ok(result);
+    }
+
+    // =========================================================
+    // AGE GROUPS
+    // =========================================================
+
     [AllowAnonymous]
-    [HttpGet("age-groups")] public async Task<IActionResult> AgeGroups() => Ok(await _db.AgeGroups.AsNoTracking().Where(x => x.IsActive).OrderBy(x => x.Name).ToListAsync());
+    [HttpGet("age-groups")]
+    public async Task<IActionResult> AgeGroups()
+    {
+        var result =
+            await _service.GetAgeGroupsAsync();
+
+        return Ok(result);
+    }
+
+    // =========================================================
+    // DEPARTMENTS
+    // =========================================================
+
+    [AllowAnonymous]
+    [HttpGet("departments")]
+    public async Task<IActionResult> Departments()
+    {
+        var result =
+            await _service.GetDepartmentsAsync();
+
+        return Ok(result);
+    }
+
+    // =========================================================
+    // SET TYPES
+    // =========================================================
+
+    [AllowAnonymous]
+    [HttpGet("set-types")]
+    public async Task<IActionResult> SetTypes()
+    {
+        var result =
+            await _service.GetSetTypesAsync();
+
+        return Ok(result);
+    }
 }

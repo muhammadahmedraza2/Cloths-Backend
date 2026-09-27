@@ -4,18 +4,13 @@ public class MenuOptions
 {
     public const string SectionName = "Menu";
 
-    public string ConnectionName { get; set; }
-        = "DefaultConnection";
+    public string ConnectionName { get; set; } = "DefaultConnection";
 
-    public string StoredProcedure { get; set; }
-        = "sp_Menu_GetAll";
+    public string StoredProcedure { get; set; } = "sp_Menu_GetAll";
 
-    public string RouteTemplate { get; set; }
-        = "/app/{site}/{formId}";
+    public string RouteTemplate { get; set; } = "/app/FrmList/{formId}";
 
-    public string PcIdClaimType { get; set; }
-        = "PcId";
+    public string PcIdClaimType { get; set; } = "PcId";
 
-    public int AdminPcId { get; set; }
-        = 5000;
+    public int AdminPcId { get; set; } = 5000;
 }

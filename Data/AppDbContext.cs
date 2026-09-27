@@ -7,7 +7,10 @@ namespace ClothingErp.Api.Data;
 
 public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options)
+    {
+    }
 
     public DbSet<FormDefinition> FormDefinitions => Set<FormDefinition>();
     public DbSet<MasterRecord> MasterRecords => Set<MasterRecord>();
@@ -15,6 +18,8 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
     public DbSet<Brand> Brands => Set<Brand>();
     public DbSet<Size> Sizes => Set<Size>();
     public DbSet<Color> Colors => Set<Color>();
+    public DbSet<Department> Departments => Set<Department>();
+    public DbSet<SetType> SetTypes => Set<SetType>();
     public DbSet<AgeGroup> AgeGroups => Set<AgeGroup>();
     public DbSet<Product> Products => Set<Product>();
     public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
@@ -40,11 +45,15 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
         modelBuilder.Entity<AppUser>(e =>
         {
             e.ToTable("Users");
-            e.Property(u => u.UserName).HasColumnName("Username").HasMaxLength(100);
+            e.Property(u => u.UserName).HasColumnName("Username").HasMaxLength(100).IsRequired();
             e.Property(u => u.PasswordHash).IsRequired();
-            e.Property(u => u.FullName).HasMaxLength(200);
-            e.Property(u => u.Role).HasMaxLength(50);
+            e.Property(u => u.FullName).HasMaxLength(200).IsRequired();
+            e.Property(u => u.Role).HasMaxLength(50).IsRequired();
+            e.Property(u => u.PcId).HasColumnName("PcId").IsRequired();
+            e.Property(u => u.IsActive).HasColumnName("IsActive").IsRequired();
+            e.Property(u => u.CreatedAt).HasColumnName("CreatedAt").IsRequired();
             e.Property(u => u.Email).HasMaxLength(256);
+            e.Property(u => u.PhoneNumber).HasMaxLength(50);
             e.HasIndex(u => u.UserName).IsUnique();
             e.HasIndex(u => u.Email).IsUnique().HasFilter("[Email] IS NOT NULL");
         });
@@ -103,6 +112,20 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
             e.HasIndex(x => x.Name).IsUnique();
         });
 
+        modelBuilder.Entity<Department>(e =>
+        {
+            e.ToTable("ShopDepartments");
+            e.Property(x => x.Name).HasMaxLength(100).IsRequired();
+            e.HasIndex(x => x.Name).IsUnique();
+        });
+
+        modelBuilder.Entity<SetType>(e =>
+        {
+            e.ToTable("ShopSetTypes");
+            e.Property(x => x.Name).HasMaxLength(100).IsRequired();
+            e.HasIndex(x => x.Name).IsUnique();
+        });
+
         modelBuilder.Entity<AgeGroup>(e =>
         {
             e.ToTable("ShopAgeGroups");
@@ -119,9 +142,13 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
             e.Property(x => x.PurchasePrice).HasPrecision(18, 2);
             e.Property(x => x.SalePrice).HasPrecision(18, 2);
             e.Property(x => x.Discount).HasPrecision(18, 2);
+            e.Property(x => x.SetIncludes).HasMaxLength(300);
+
             e.HasOne(x => x.Category).WithMany(x => x.Products).HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(x => x.Brand).WithMany(x => x.Products).HasForeignKey(x => x.BrandId).OnDelete(DeleteBehavior.SetNull);
             e.HasOne(x => x.AgeGroup).WithMany(x => x.Products).HasForeignKey(x => x.AgeGroupId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.Department).WithMany(x => x.Products).HasForeignKey(x => x.DepartmentId).OnDelete(DeleteBehavior.SetNull);
+            e.HasOne(x => x.SetType).WithMany(x => x.Products).HasForeignKey(x => x.SetTypeId).OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<ProductVariant>(e =>

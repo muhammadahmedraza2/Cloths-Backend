@@ -7,6 +7,8 @@ public class BrandRequestDto { public string Name { get; set; } = ""; public boo
 public class SizeRequestDto { public string Name { get; set; } = ""; public string? AgeRange { get; set; } public bool IsActive { get; set; } = true; }
 public class ColorRequestDto { public string Name { get; set; } = ""; public string? HexCode { get; set; } public bool IsActive { get; set; } = true; }
 public class AgeGroupRequestDto { public string Name { get; set; } = ""; public int? MinAgeMonths { get; set; } public int? MaxAgeMonths { get; set; } public bool IsActive { get; set; } = true; }
+public class DepartmentRequestDto { public string Name { get; set; } = ""; public bool IsActive { get; set; } = true; }
+public class SetTypeRequestDto { public string Name { get; set; } = ""; public int PieceCount { get; set; } = 1; public bool IsActive { get; set; } = true; }
 
 public class ProductVariantRequestDto
 {
@@ -29,6 +31,9 @@ public class ProductRequestDto
     public Guid? BrandId { get; set; }
     public Gender Gender { get; set; }
     public Guid? AgeGroupId { get; set; }
+    public Guid? DepartmentId { get; set; }
+    public Guid? SetTypeId { get; set; }
+    public string? SetIncludes { get; set; }
     public string? Fabric { get; set; }
     public string? Season { get; set; }
     public decimal PurchasePrice { get; set; }
@@ -53,6 +58,11 @@ public class ProductResponseDto
     public Gender Gender { get; set; }
     public Guid? AgeGroupId { get; set; }
     public string? AgeGroupName { get; set; }
+    public Guid? DepartmentId { get; set; }
+    public string? DepartmentName { get; set; }
+    public Guid? SetTypeId { get; set; }
+    public string? SetTypeName { get; set; }
+    public string? SetIncludes { get; set; }
     public string? Fabric { get; set; }
     public string? Season { get; set; }
     public decimal PurchasePrice { get; set; }
@@ -77,6 +87,14 @@ public class ProductVariantResponseDto
     public int StockQuantity { get; set; }
     public int MinimumStockLevel { get; set; }
     public bool IsActive { get; set; }
+}
+
+/// <summary>Customer-facing product list wrapper — "Not Found" ke liye.</summary>
+public class CatalogProductsResultDto
+{
+    public bool Found { get; set; }
+    public string? Message { get; set; }
+    public List<ProductResponseDto> Products { get; set; } = new();
 }
 
 public class AddToCartRequestDto { public Guid ProductVariantId { get; set; } public int Quantity { get; set; } = 1; }
