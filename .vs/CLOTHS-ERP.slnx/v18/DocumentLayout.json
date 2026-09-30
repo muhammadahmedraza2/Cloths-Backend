@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{32FE3CEC-6A83-874F-CA8F-48765362BDBF}|CLOTHS-ERP.API.csproj|c:\\users\\tesla laptops\\desktop\\google drive front\u0026back\\cloths-backend-updated\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32FE3CEC-6A83-874F-CA8F-48765362BDBF}|CLOTHS-ERP.API.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{32FE3CEC-6A83-874F-CA8F-48765362BDBF}|CLOTHS-ERP.API.csproj|c:\\users\\tesla laptops\\desktop\\google drive front\u0026back\\cloths-backend-updated\\services\\ecommerceservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{32FE3CEC-6A83-874F-CA8F-48765362BDBF}|CLOTHS-ERP.API.csproj|solutionrelative:services\\ecommerceservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -25,10 +29,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{32FE3CEC-6A83-874F-CA8F-48765362BDBF}|CLOTHS-ERP.API.csproj|c:\\users\\tesla laptops\\desktop\\google drive front\u0026back\\cloths-backend-updated\\models\\ecommercemodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{32FE3CEC-6A83-874F-CA8F-48765362BDBF}|CLOTHS-ERP.API.csproj|solutionrelative:models\\ecommercemodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{32FE3CEC-6A83-874F-CA8F-48765362BDBF}|CLOTHS-ERP.API.csproj|c:\\users\\tesla laptops\\desktop\\google drive front\u0026back\\cloths-backend-updated\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{32FE3CEC-6A83-874F-CA8F-48765362BDBF}|CLOTHS-ERP.API.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{32FE3CEC-6A83-874F-CA8F-48765362BDBF}|CLOTHS-ERP.API.csproj|c:\\users\\tesla laptops\\desktop\\google drive front\u0026back\\cloths-backend-updated\\models\\appuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -70,20 +70,7 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ECommerceDtos.cs",
-              "DocumentMoniker": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Dtos\\ECommerceDtos.cs",
-              "RelativeDocumentMoniker": "Dtos\\ECommerceDtos.cs",
-              "ToolTip": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Dtos\\ECommerceDtos.cs",
-              "RelativeToolTip": "Dtos\\ECommerceDtos.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAAAAC8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-26T09:06:54.183Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "ECommerceModels.cs",
               "DocumentMoniker": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Models\\ECommerceModels.cs",
               "RelativeDocumentMoniker": "Models\\ECommerceModels.cs",
@@ -96,7 +83,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "AdminController.cs",
               "DocumentMoniker": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Controllers\\AdminController.cs",
               "RelativeDocumentMoniker": "Controllers\\AdminController.cs",
@@ -109,7 +96,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "EcommerceService.cs",
               "DocumentMoniker": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Services\\EcommerceService.cs",
               "RelativeDocumentMoniker": "Services\\EcommerceService.cs",
@@ -122,7 +109,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Program.cs*",
+              "RelativeToolTip": "Program.cs*",
+              "ViewState": "AgIAAFgBAAAAAAAAAAAgwHABAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-27T07:47:43.236Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ECommerceDtos.cs",
+              "DocumentMoniker": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Dtos\\ECommerceDtos.cs",
+              "RelativeDocumentMoniker": "Dtos\\ECommerceDtos.cs",
+              "ToolTip": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Dtos\\ECommerceDtos.cs",
+              "RelativeToolTip": "Dtos\\ECommerceDtos.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAAAC8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-26T09:06:54.183Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "CartController.cs",
               "DocumentMoniker": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Controllers\\CartController.cs",
               "RelativeDocumentMoniker": "Controllers\\CartController.cs",
@@ -135,7 +148,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Data\\AppDbContext.cs",
               "RelativeDocumentMoniker": "Data\\AppDbContext.cs",
@@ -144,19 +157,6 @@
               "ViewState": "AgIAABABAAAAAAAAAAAowCgBAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-09-26T09:04:58.596Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAGQBAAAAAAAAAAAkwHMBAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-27T07:47:43.236Z",
               "EditorCaption": ""
             },
             {

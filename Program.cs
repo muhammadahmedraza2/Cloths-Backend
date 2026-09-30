@@ -346,12 +346,8 @@ var app = builder.Build();
 // HTTP Pipeline
 // ============================================================
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
@@ -363,7 +359,7 @@ app.UseCors(CorsPolicyName);
 
 app.UseRateLimiter();
 
-app.UseAuthentication(); 
+app.UseAuthentication();
 
 app.UseAuthorization();
 
