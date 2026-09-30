@@ -64,7 +64,8 @@ var allowedOrigins =
         .Get<string[]>()
     ?? new[]
     {
-        "http://localhost:4200"
+        "http://localhost:4200",
+        "https://cloths-chi.vercel.app"
     };
 
 
