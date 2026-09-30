@@ -58,15 +58,30 @@ var audience =
     ?? throw new InvalidOperationException(
         "JwtSettings:Audience is not configured.");
 
-var allowedOrigins =
+// FIX 1: Default origins ALWAYS included, config origins are added on top.
+// Before: if appsettings had Cors:AllowedOrigins (e.g. only localhost),
+// the Vercel URL was silently dropped and live site got CORS errors.
+var defaultOrigins = new[]
+{
+    "http://localhost:4200",
+    "https://localhost:4200",
+    "https://cloths-chi.vercel.app"
+};
+
+var configuredOrigins =
     builder.Configuration
         .GetSection("Cors:AllowedOrigins")
         .Get<string[]>()
-    ?? new[]
-    {
-        "http://localhost:4200",
-        "https://cloths-chi.vercel.app"
-    };
+    ?? Array.Empty<string>();
+
+// Trailing slash removed: "https://site.com/" would NOT match the browser Origin header.
+var allowedOrigins =
+    defaultOrigins
+        .Concat(configuredOrigins)
+        .Where(o => !string.IsNullOrWhiteSpace(o))
+        .Select(o => o.Trim().TrimEnd('/'))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .ToArray();
 
 
 // ============================================================
@@ -347,6 +362,13 @@ var app = builder.Build();
 // HTTP Pipeline
 // ============================================================
 
+// FIX 2: CORS must run FIRST.
+// - Before HttpsRedirection: otherwise the browser's preflight (OPTIONS)
+//   request gets a 307 redirect and the browser rejects it.
+// - Before GlobalExceptionMiddleware: otherwise error responses (500/400)
+//   have no CORS headers and the browser shows a CORS error instead of the real error.
+app.UseCors(CorsPolicyName);
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -355,8 +377,6 @@ app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
-
-app.UseCors(CorsPolicyName);
 
 app.UseRateLimiter();
 
