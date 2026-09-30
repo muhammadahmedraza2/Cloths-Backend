@@ -211,8 +211,8 @@ public class EcommerceService
     // =========================================================
 
     public async Task<ProductResponseDto> SaveProductAsync(
-        Guid? id,
-        ProductRequestDto dto)
+    Guid? id,
+    ProductRequestDto dto)
     {
         await ValidateProductAsync(id, dto);
 
@@ -229,30 +229,43 @@ public class EcommerceService
                     .Include(x => x.Variants)
                     .Include(x => x.Images)
                     .FirstOrDefaultAsync(x => x.Id == id.Value)
-                    ?? throw new KeyNotFoundException(
-                        "Product not found.");
+                    ?? throw new KeyNotFoundException("Product not found.");
 
+                // Update main product
                 UpdateProduct(product, dto);
 
-                _db.ProductVariants.RemoveRange(
-                    product.Variants);
+                // Delete old variants
+                if (product.Variants.Any())
+                {
+                    _db.ProductVariants.RemoveRange(product.Variants);
+                }
 
-                _db.ProductImages.RemoveRange(
-                    product.Images);
+                // Delete old images
+                if (product.Images.Any())
+                {
+                    _db.ProductImages.RemoveRange(product.Images);
+                }
 
-                product.Variants.Clear();
-                product.Images.Clear();
+                // Save parent update + old child deletes first
+                await _db.SaveChangesAsync();
+
+                // Add new variants
+                AddProductVariants(product, dto);
+
+                // Add new images
+                AddProductImages(product, dto);
             }
             else
             {
                 product = CreateProduct(dto);
 
                 await _db.Products.AddAsync(product);
+
+                AddProductVariants(product, dto);
+                AddProductImages(product, dto);
             }
 
-            AddProductVariants(product, dto);
-            AddProductImages(product, dto);
-
+            // Recalculate stock
             product.StockQuantity =
                 product.Variants.Sum(x => x.StockQuantity);
 
@@ -671,39 +684,27 @@ public class EcommerceService
     // =========================================================
 
     private static void AddProductImages(
-        Product product,
-        ProductRequestDto dto)
+       Product product,
+       ProductRequestDto dto)
     {
-        var imageUrls =
-            (dto.ImageUrls ?? new List<string>())
-            .Where(x =>
-                !string.IsNullOrWhiteSpace(x))
-            .Select(x =>
-                x.Trim())
+        var imageUrls = (dto.ImageUrls ?? new List<string>())
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x.Trim())
+            .Distinct()
             .ToList();
 
-        for (var i = 0; i < imageUrls.Count; i++)
+        for (int i = 0; i < imageUrls.Count; i++)
         {
-            product.Images.Add(
-                new ProductImage
-                {
-                    Id = Guid.NewGuid(),
-
-                    ProductId =
-                        product.Id,
-
-                    ImageUrl =
-                        imageUrls[i],
-
-                    IsPrimary =
-                        i == 0,
-
-                    CreatedAt =
-                        DateTime.UtcNow
-                });
+            product.Images.Add(new ProductImage
+            {
+                Id = Guid.NewGuid(),
+                ProductId = product.Id,
+                ImageUrl = imageUrls[i],
+                IsPrimary = i == 0,
+                CreatedAt = DateTime.UtcNow
+            });
         }
     }
-
     public async Task DeleteProductAsync(Guid id)
     {
         var product = await _db.Products
