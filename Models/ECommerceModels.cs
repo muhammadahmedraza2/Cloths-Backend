@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace ClothingErp.Api.Models;
 
 public enum Gender { Unisex = 0, Boy = 1, Girl = 2, Man = 3, Woman = 4 }
@@ -178,7 +180,9 @@ public class CartItem
     public string ProductId { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? ImageUrl { get; set; }
+    [NotMapped]
     public decimal Price { get => UnitPrice; set => UnitPrice = value; }
+    [NotMapped]
     public int Qty { get => Quantity; set => Quantity = value; }
 }
 
@@ -231,9 +235,14 @@ public class OrderItem
     public decimal UnitPrice { get; set; }
     public decimal TotalPrice { get; set; }
 
+    [NotMapped]
     public string ProductId { get => ProductVariantId.ToString(); set { if (Guid.TryParse(value, out var id)) ProductVariantId = id; } }
+    [NotMapped]
     public string Name { get => ProductName; set => ProductName = value; }
+    [NotMapped]
     public decimal Price { get => UnitPrice; set => UnitPrice = value; }
+
+    [NotMapped]
     public int Qty { get => Quantity; set => Quantity = value; }
 }
 

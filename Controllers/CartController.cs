@@ -26,21 +26,17 @@ public class CartController : ControllerBase
         get
         {
             var userId =
-                User.FindFirstValue(
-                    ClaimTypes.NameIdentifier);
+                User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? User.FindFirstValue("sub")
+                ?? User.FindFirstValue("nameid");
 
-            if (!Guid.TryParse(
-                    userId,
-                    out var id))
-            {
+            if (!Guid.TryParse(userId, out var id))
                 throw new UnauthorizedAccessException(
                     "User ID claim is missing or invalid.");
-            }
 
             return id;
         }
     }
-
     [HttpGet]
     public async Task<IActionResult> Get()
     {

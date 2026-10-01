@@ -184,6 +184,11 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
         modelBuilder.Entity<CartItem>(e =>
         {
             e.ToTable("ShopCartItems");
+
+            // Alias properties: columns nahi hain, sirf Price/Qty ke naam se code mein kaam aate hain.
+            e.Ignore(x => x.Price);
+            e.Ignore(x => x.Qty);
+
             e.Property(x => x.UnitPrice).HasPrecision(18, 2);
             e.HasIndex(x => new { x.CartId, x.ProductVariantId }).IsUnique();
             e.HasOne(x => x.Cart).WithMany(x => x.Items).HasForeignKey(x => x.CartId).OnDelete(DeleteBehavior.Cascade);
@@ -218,6 +223,13 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
         modelBuilder.Entity<OrderItem>(e =>
         {
             e.ToTable("ShopOrderItems");
+
+            // Alias properties: columns nahi hain.
+            e.Ignore(x => x.ProductId);
+            e.Ignore(x => x.Name);
+            e.Ignore(x => x.Price);
+            e.Ignore(x => x.Qty);
+
             e.Property(x => x.ProductName).HasMaxLength(250).IsRequired();
             e.Property(x => x.SKU).HasMaxLength(100).IsRequired();
             e.Property(x => x.UnitPrice).HasPrecision(18, 2);
