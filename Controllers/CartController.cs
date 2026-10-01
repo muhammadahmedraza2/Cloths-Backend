@@ -10,7 +10,7 @@ namespace ClothingErp.Api.Controllers;
 
 [ApiController]
 [Route("api/cart")]
-[Authorize(Roles = "User,Admin")]
+[Authorize]
 public class CartController : ControllerBase
 {
     private readonly EcommerceService _service;
@@ -44,28 +44,23 @@ public class CartController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        return Ok(
+        var result =
             await _service.GetCartAsync(
-                UserId));
+                UserId);
+
+        return Ok(result);
     }
 
     [HttpPost("items")]
-    [Authorize]
-    public async Task<IActionResult> Add(AddToCartRequestDto dto)
+    public async Task<IActionResult> Add(
+        [FromBody] AddToCartRequestDto dto)
     {
-        var claims = User.Claims
-            .Select(x => new
-            {
-                x.Type,
-                x.Value
-            })
-            .ToList();
+        var result =
+            await _service.AddToCartAsync(
+                UserId,
+                dto);
 
-        Console.WriteLine(
-            System.Text.Json.JsonSerializer.Serialize(claims)
-        );
-
-        return Ok(await _service.AddToCartAsync(UserId, dto));
+        return Ok(result);
     }
 
     [HttpPut("items/{id:guid}")]
@@ -73,21 +68,25 @@ public class CartController : ControllerBase
         Guid id,
         [FromBody] UpdateCartRequestDto dto)
     {
-        return Ok(
+        var result =
             await _service.UpdateCartAsync(
                 UserId,
                 id,
-                dto.Quantity));
+                dto.Quantity);
+
+        return Ok(result);
     }
 
     [HttpDelete("items/{id:guid}")]
     public async Task<IActionResult> Remove(
         Guid id)
     {
-        return Ok(
+        var result =
             await _service.RemoveCartItemAsync(
                 UserId,
-                id));
+                id);
+
+        return Ok(result);
     }
 
     [HttpDelete("clear")]
