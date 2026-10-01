@@ -15,9 +15,28 @@ public class CartController : ControllerBase
     public CartController(EcommerceService service) => _service = service;
     private Guid UserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-    [HttpGet] public async Task<IActionResult> Get() => Ok(await _service.GetCartAsync(UserId));
-    [HttpPost("items")] public async Task<IActionResult> Add(AddToCartRequestDto dto) => Ok(await _service.AddToCartAsync(UserId, dto));
-    [HttpPut("items/{id:guid}")] public async Task<IActionResult> Update(Guid id, UpdateCartRequestDto dto) => Ok(await _service.UpdateCartAsync(UserId, id, dto.Quantity));
-    [HttpDelete("items/{id:guid}")] public async Task<IActionResult> Remove(Guid id) => Ok(await _service.RemoveCartItemAsync(UserId, id));
-    [HttpDelete("clear")] public async Task<IActionResult> Clear() { await _service.ClearCartAsync(UserId); return Ok(new { message = "Cart cleared." }); }
+    [HttpGet]
+    public async Task<IActionResult> Get()
+     => Ok(await _service.GetCartAsync(UserId));
+
+    [HttpPost("items")]
+    public async Task<IActionResult> Add(AddToCartRequestDto dto)
+        => Ok(await _service.AddToCartAsync(UserId, dto));
+
+    [HttpPut("items/{id:guid}")]
+    public async Task<IActionResult> Update(
+        Guid id,
+        UpdateCartRequestDto dto)
+        => Ok(await _service.UpdateCartAsync(UserId, id, dto.Quantity));
+
+    [HttpDelete("items/{id:guid}")]
+    public async Task<IActionResult> Remove(Guid id)
+        => Ok(await _service.RemoveCartItemAsync(UserId, id));
+
+    [HttpDelete("clear")]
+    public async Task<IActionResult> Clear()
+    {
+        await _service.ClearCartAsync(UserId);
+        return Ok(new { message = "Cart cleared." });
+    }
 }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CLOTHS-ERP.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ef9c555c4e78a23a9408446ca3201ee6ff6eee69")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7776bff5e89ec41d4bc0a7c04734a8119ca59cd5")]
 [assembly: System.Reflection.AssemblyProductAttribute("CLOTHS-ERP.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CLOTHS-ERP.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

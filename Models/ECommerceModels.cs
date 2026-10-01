@@ -1,8 +1,21 @@
 namespace ClothingErp.Api.Models;
 
 public enum Gender { Unisex = 0, Boy = 1, Girl = 2, Man = 3, Woman = 4 }
-public enum PaymentMethod { CashOnDelivery = 0, Cash = 0, Card = 1, OnlineBankTransfer = 2, Bank = 2 }
-public enum PaymentStatus { Pending = 0, Paid = 1, Failed = 2, Cancelled = 3, Refunded = 4 }
+public enum PaymentMethod
+{
+    CashOnDelivery = 1,
+    Installment = 2,
+    OnlineBankTransfer = 3,
+    Card = 4
+}
+public enum PaymentStatus
+{
+    Pending = 1,
+    PartiallyPaid = 2,
+    Paid = 3,
+    Failed = 4,
+    Cancelled = 5
+}
 public enum OrderStatus { Pending = 0, Confirmed = 1, Processing = 2, Packed = 3, Shipped = 4, Delivered = 5, Cancelled = 6, Returned = 7 }
 public enum StockTransactionType { Purchase = 0, Sale = 1, Return = 2, Adjustment = 3, Damage = 4 }
 public enum PurchasePaymentStatus { Pending = 0, Paid = 1, PartiallyPaid = 2, Cancelled = 3 }
