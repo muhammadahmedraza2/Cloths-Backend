@@ -1,6 +1,8 @@
 using System.Security.Claims;
+
 using ClothingErp.Api.Dtos;
 using ClothingErp.Api.Services;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +15,8 @@ public class CartController : ControllerBase
 {
     private readonly EcommerceService _service;
 
-    public CartController(EcommerceService service)
+    public CartController(
+        EcommerceService service)
     {
         _service = service;
     }
@@ -23,13 +26,15 @@ public class CartController : ControllerBase
         get
         {
             var userId =
-                User.FindFirstValue(ClaimTypes.NameIdentifier);
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier);
 
-            if (!Guid.TryParse(userId, out var id))
+            if (!Guid.TryParse(
+                    userId,
+                    out var id))
             {
                 throw new UnauthorizedAccessException(
-                    "User ID claim is missing or invalid."
-                );
+                    "User ID claim is missing or invalid.");
             }
 
             return id;
@@ -40,8 +45,8 @@ public class CartController : ControllerBase
     public async Task<IActionResult> Get()
     {
         return Ok(
-            await _service.GetCartAsync(UserId)
-        );
+            await _service.GetCartAsync(
+                UserId));
     }
 
     [HttpPost("items")]
@@ -51,9 +56,7 @@ public class CartController : ControllerBase
         return Ok(
             await _service.AddToCartAsync(
                 UserId,
-                dto
-            )
-        );
+                dto));
     }
 
     [HttpPut("items/{id:guid}")]
@@ -65,26 +68,24 @@ public class CartController : ControllerBase
             await _service.UpdateCartAsync(
                 UserId,
                 id,
-                dto.Quantity
-            )
-        );
+                dto.Quantity));
     }
 
     [HttpDelete("items/{id:guid}")]
-    public async Task<IActionResult> Remove(Guid id)
+    public async Task<IActionResult> Remove(
+        Guid id)
     {
         return Ok(
             await _service.RemoveCartItemAsync(
                 UserId,
-                id
-            )
-        );
+                id));
     }
 
     [HttpDelete("clear")]
     public async Task<IActionResult> Clear()
     {
-        await _service.ClearCartAsync(UserId);
+        await _service.ClearCartAsync(
+            UserId);
 
         return Ok(new
         {

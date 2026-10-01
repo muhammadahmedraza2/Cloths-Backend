@@ -205,28 +205,84 @@ builder.Services
         JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.RequireHttpsMetadata = true;
+        options.SaveToken = false;
+
         options.TokenValidationParameters =
             new TokenValidationParameters
             {
+                // Token must contain correct issuer
                 ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-
                 ValidIssuer = issuer,
+
+                // Token must contain correct audience
+                ValidateAudience = true,
                 ValidAudience = audience,
+
+                // Token must not be expired
+                ValidateLifetime = true,
+
+                // Token signature must be valid
+                ValidateIssuerSigningKey = true,
 
                 IssuerSigningKey =
                     new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(secret)),
 
+                /*
+                 * IMPORTANT
+                 *
+                 * Our TokenService creates:
+                 *
+                 * "role": "Admin"
+                 *
+                 * Therefore explicitly tell ASP.NET Core
+                 * that "role" is the role claim.
+                 */
+                RoleClaimType = "role",
+
+                /*
+                 * User identity claim.
+                 */
+                NameClaimType =
+                    ClaimTypes.NameIdentifier,
+
+                /*
+                 * Small clock tolerance.
+                 */
                 ClockSkew =
                     TimeSpan.FromMinutes(1)
             };
 
-        // Do not query Users.IsActive here.
-        // The current database does not contain that column.
-        // JWT validation itself is handled above.
+        /*
+         * Authentication diagnostics.
+         *
+         * These do NOT expose the JWT itself.
+         * They make authentication failures visible
+         * in the server logs.
+         */
+        options.Events =
+            new JwtBearerEvents
+            {
+                OnAuthenticationFailed = context =>
+                {
+                    Console.WriteLine(
+                        $"JWT AUTHENTICATION FAILED: " +
+                        $"{context.Exception.Message}");
+
+                    return Task.CompletedTask;
+                },
+
+                OnChallenge = context =>
+                {
+                    Console.WriteLine(
+                        $"JWT CHALLENGE: " +
+                        $"Error={context.Error}, " +
+                        $"Description={context.ErrorDescription}");
+
+                    return Task.CompletedTask;
+                }
+            };
     });
 
 

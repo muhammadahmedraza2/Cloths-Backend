@@ -2,8 +2,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+
 using ClothingErp.Api.Models;
 using CLOTHS_ERP.API.Interfaces;
+
 using Microsoft.IdentityModel.Tokens;
 
 namespace ClothingErp.Api.Services;
@@ -50,38 +52,45 @@ public class TokenService : ITokenService
 
         var claims = new List<Claim>
         {
-            new(
-                JwtRegisteredClaimNames.Sub,
-                user.Id.ToString()),
-
+            // User ID
             new(
                 ClaimTypes.NameIdentifier,
                 user.Id.ToString()),
 
+            // Username
             new(
                 ClaimTypes.Name,
                 user.UserName ?? string.Empty),
 
+            /*
+             * IMPORTANT:
+             *
+             * Explicit "role" claim.
+             *
+             * Program.cs uses:
+             * RoleClaimType = "role"
+             */
             new(
-                ClaimTypes.Role,
+                "role",
                 role),
 
             /*
-             * IMPORTANT:
-             * Menu/API can read PC_ID directly.
+             * PC ID used by MenuController.
+             */
+            new(
+                "PcId",
+                user.PcId.ToString()),
+
+            /*
+             * Kept for compatibility.
              */
             new(
                 "PC_ID",
                 user.PcId.ToString()),
 
             /*
-             * Keep PcId as well for compatibility
-             * with any existing code.
+             * Full name.
              */
-            new(
-                "PcId",
-                user.PcId.ToString()),
-
             new(
                 "FullName",
                 user.FullName ?? string.Empty)
