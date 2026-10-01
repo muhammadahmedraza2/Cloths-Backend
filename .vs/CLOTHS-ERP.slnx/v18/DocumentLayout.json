@@ -76,7 +76,7 @@
               "RelativeDocumentMoniker": "Models\\ECommerceModels.cs",
               "ToolTip": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Models\\ECommerceModels.cs",
               "RelativeToolTip": "Models\\ECommerceModels.cs",
-              "ViewState": "AgIAADkBAAAAAAAAAAAuwEgBAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAE8BAAAAAAAAAAAuwF4BAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-09-26T09:02:17.074Z",
               "EditorCaption": ""
@@ -89,7 +89,7 @@
               "RelativeDocumentMoniker": "Controllers\\AdminController.cs",
               "ToolTip": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Controllers\\AdminController.cs",
               "RelativeToolTip": "Controllers\\AdminController.cs",
-              "ViewState": "AgIAAEMDAAAAAAAAAAAQwEkDAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAGgDAAAAAAAAAAAQwG4DAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-09-26T06:28:58.634Z",
               "EditorCaption": ""
@@ -102,7 +102,7 @@
               "RelativeDocumentMoniker": "Services\\EcommerceService.cs",
               "ToolTip": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Services\\EcommerceService.cs",
               "RelativeToolTip": "Services\\EcommerceService.cs",
-              "ViewState": "AgIAAGEJAAAAAAAAAAAAAGUJAAAaAAAAAAAAAA==",
+              "ViewState": "AgIAALoJAAAAAAAAAAAAAL4JAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-09-26T06:37:07.749Z",
               "EditorCaption": ""
@@ -115,7 +115,7 @@
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAG0BAAAAAAAAAAAgwIUBAAAKAAAAAAAAAA==",
+              "ViewState": "AgIAAIsBAAAAAAAAAAAgwL4BAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-09-27T07:47:43.236Z",
               "EditorCaption": ""
@@ -141,7 +141,7 @@
               "RelativeDocumentMoniker": "Controllers\\CartController.cs",
               "ToolTip": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Controllers\\CartController.cs",
               "RelativeToolTip": "Controllers\\CartController.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAkwBcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAkwGIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-09-27T16:22:52.243Z",
               "EditorCaption": ""
@@ -154,7 +154,7 @@
               "RelativeDocumentMoniker": "Data\\AppDbContext.cs",
               "ToolTip": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Data\\AppDbContext.cs",
               "RelativeToolTip": "Data\\AppDbContext.cs",
-              "ViewState": "AgIAABABAAAAAAAAAAAowCgBAAABAAAAAAAAAA==",
+              "ViewState": "AgIAABwBAAAAAAAAAAAowDQBAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-09-26T09:04:58.596Z",
               "EditorCaption": ""
@@ -219,7 +219,7 @@
               "RelativeDocumentMoniker": "Services\\AuthService.cs",
               "ToolTip": "C:\\Users\\Tesla Laptops\\Desktop\\GOOGLE DRIVE FRONT\u0026BACK\\Cloths-Backend-Updated\\Services\\AuthService.cs",
               "RelativeToolTip": "Services\\AuthService.cs",
-              "ViewState": "AgIAANEBAAAAAAAAAAAuwOYBAAABAAAAAAAAAA==",
+              "ViewState": "AgIAANQBAAAAAAAAAAAuwOkBAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-09-25T19:03:49.094Z",
               "EditorCaption": ""
