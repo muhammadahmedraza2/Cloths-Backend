@@ -50,13 +50,22 @@ public class CartController : ControllerBase
     }
 
     [HttpPost("items")]
-    public async Task<IActionResult> Add(
-        [FromBody] AddToCartRequestDto dto)
+    [Authorize]
+    public async Task<IActionResult> Add(AddToCartRequestDto dto)
     {
-        return Ok(
-            await _service.AddToCartAsync(
-                UserId,
-                dto));
+        var claims = User.Claims
+            .Select(x => new
+            {
+                x.Type,
+                x.Value
+            })
+            .ToList();
+
+        Console.WriteLine(
+            System.Text.Json.JsonSerializer.Serialize(claims)
+        );
+
+        return Ok(await _service.AddToCartAsync(UserId, dto));
     }
 
     [HttpPut("items/{id:guid}")]
