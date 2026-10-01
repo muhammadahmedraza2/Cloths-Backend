@@ -18,12 +18,23 @@ public class CartController : ControllerBase
         _service = service;
     }
 
-    private Guid UserId =>
-        Guid.Parse(
-            User.FindFirstValue(
-                ClaimTypes.NameIdentifier
-            )!
-        );
+    private Guid UserId
+    {
+        get
+        {
+            var userId =
+                User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!Guid.TryParse(userId, out var id))
+            {
+                throw new UnauthorizedAccessException(
+                    "User ID claim is missing or invalid."
+                );
+            }
+
+            return id;
+        }
+    }
 
     [HttpGet]
     public async Task<IActionResult> Get()
@@ -35,7 +46,7 @@ public class CartController : ControllerBase
 
     [HttpPost("items")]
     public async Task<IActionResult> Add(
-        AddToCartRequestDto dto)
+        [FromBody] AddToCartRequestDto dto)
     {
         return Ok(
             await _service.AddToCartAsync(
@@ -48,7 +59,7 @@ public class CartController : ControllerBase
     [HttpPut("items/{id:guid}")]
     public async Task<IActionResult> Update(
         Guid id,
-        UpdateCartRequestDto dto)
+        [FromBody] UpdateCartRequestDto dto)
     {
         return Ok(
             await _service.UpdateCartAsync(
@@ -60,8 +71,7 @@ public class CartController : ControllerBase
     }
 
     [HttpDelete("items/{id:guid}")]
-    public async Task<IActionResult> Remove(
-        Guid id)
+    public async Task<IActionResult> Remove(Guid id)
     {
         return Ok(
             await _service.RemoveCartItemAsync(
