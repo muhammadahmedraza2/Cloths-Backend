@@ -206,6 +206,7 @@ builder.Services
     .AddJwtBearer(options =>
     {
         options.RequireHttpsMetadata = true;
+        options.MapInboundClaims = false;   // <-- yeh line add karein
         options.SaveToken = false;
 
         options.TokenValidationParameters =

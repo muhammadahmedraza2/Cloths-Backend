@@ -211,8 +211,8 @@ public class EcommerceService
     // =========================================================
 
     public async Task<ProductResponseDto> SaveProductAsync(
-    Guid? id,
-    ProductRequestDto dto)
+        Guid? id,
+        ProductRequestDto dto)
     {
         await ValidateProductAsync(id, dto);
 
@@ -229,31 +229,24 @@ public class EcommerceService
                     .Include(x => x.Variants)
                     .Include(x => x.Images)
                     .FirstOrDefaultAsync(x => x.Id == id.Value)
-                    ?? throw new KeyNotFoundException("Product not found.");
+                    ?? throw new KeyNotFoundException(
+                        "Product not found.");
 
-                // Update main product
+                // Main product update
                 UpdateProduct(product, dto);
 
-                // Delete old variants
-                if (product.Variants.Any())
-                {
-                    _db.ProductVariants.RemoveRange(product.Variants);
-                }
+                // IMPORTANT:
+                // Variants ko delete nahi karna.
+                UpdateProductVariants(product, dto);
 
-                // Delete old images
-                if (product.Images.Any())
-                {
-                    _db.ProductImages.RemoveRange(product.Images);
-                }
+                // Images ko abhi touch nahi karenge.
+                // Pehle product + variants update test karenge.
 
-                // Save parent update + old child deletes first
+                product.StockQuantity = product.Variants
+                    .Where(x => x.IsActive)
+                    .Sum(x => x.StockQuantity);
+
                 await _db.SaveChangesAsync();
-
-                // Add new variants
-                AddProductVariants(product, dto);
-
-                // Add new images
-                AddProductImages(product, dto);
             }
             else
             {
@@ -262,18 +255,19 @@ public class EcommerceService
                 await _db.Products.AddAsync(product);
 
                 AddProductVariants(product, dto);
+
                 AddProductImages(product, dto);
+
+                product.StockQuantity = product.Variants
+                    .Where(x => x.IsActive)
+                    .Sum(x => x.StockQuantity);
+
+                await _db.SaveChangesAsync();
             }
-
-            // Recalculate stock
-            product.StockQuantity =
-                product.Variants.Sum(x => x.StockQuantity);
-
-            await _db.SaveChangesAsync();
 
             await transaction.CommitAsync();
 
-            return (await GetProductAsync(product.Id))
+            return await GetProductAsync(product.Id)
                 ?? throw new InvalidOperationException(
                     "Product was saved but could not be loaded.");
         }
@@ -283,6 +277,101 @@ public class EcommerceService
             throw;
         }
     }
+
+    private static void UpdateProductVariants(
+        Product product,
+        ProductRequestDto dto)
+    {
+        var incomingSkus = new HashSet<string>(
+            dto.Variants
+                .Where(x => !string.IsNullOrWhiteSpace(x.SKU))
+                .Select(x => x.SKU.Trim()),
+            StringComparer.OrdinalIgnoreCase);
+
+        foreach (var variantDto in dto.Variants)
+        {
+            var sku = variantDto.SKU.Trim();
+
+            var existingVariant =
+                product.Variants.FirstOrDefault(x =>
+                    string.Equals(
+                        x.SKU,
+                        sku,
+                        StringComparison.OrdinalIgnoreCase));
+
+            if (existingVariant != null)
+            {
+                // Existing variant update
+                existingVariant.SizeId =
+                    variantDto.SizeId;
+
+                existingVariant.ColorId =
+                    variantDto.ColorId;
+
+                existingVariant.SKU =
+                    sku;
+
+                existingVariant.PurchasePrice =
+                    variantDto.PurchasePrice;
+
+                existingVariant.SalePrice =
+                    variantDto.SalePrice;
+
+                existingVariant.StockQuantity =
+                    variantDto.StockQuantity;
+
+                existingVariant.MinimumStockLevel =
+                    variantDto.MinimumStockLevel;
+
+                existingVariant.IsActive =
+                    variantDto.IsActive;
+            }
+            else
+            {
+                // New variant
+                product.Variants.Add(
+                    new ProductVariant
+                    {
+                        Id = Guid.NewGuid(),
+
+                        ProductId = product.Id,
+
+                        SizeId = variantDto.SizeId,
+
+                        ColorId = variantDto.ColorId,
+
+                        SKU = sku,
+
+                        PurchasePrice =
+                            variantDto.PurchasePrice,
+
+                        SalePrice =
+                            variantDto.SalePrice,
+
+                        StockQuantity =
+                            variantDto.StockQuantity,
+
+                        MinimumStockLevel =
+                            variantDto.MinimumStockLevel,
+
+                        IsActive =
+                            variantDto.IsActive
+                    });
+            }
+        }
+
+        // Jo variants request mein nahi aaye
+        // unko delete nahi karna.
+        // Sirf inactive karna hai.
+        foreach (var existingVariant in product.Variants)
+        {
+            if (!incomingSkus.Contains(existingVariant.SKU))
+            {
+                existingVariant.IsActive = false;
+            }
+        }
+    }
+
 
     // =========================================================
     // PRODUCT VALIDATION
@@ -477,10 +566,10 @@ public class EcommerceService
             }
 
             var duplicateVariantSku =
-                await _db.ProductVariants.AnyAsync(x =>
-                    x.SKU == variantSku &&
-                    (!id.HasValue ||
-                     x.ProductId != id.Value));
+     await _db.ProductVariants.AnyAsync(x =>
+         x.SKU == variantSku &&
+         (!id.HasValue ||
+          x.ProductId != id.Value));
 
             if (duplicateVariantSku)
             {

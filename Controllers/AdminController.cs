@@ -691,14 +691,51 @@ public class AdminController : ControllerBase
         Guid id,
         [FromBody] ProductRequestDto dto)
     {
-        var product =
-            await _service.SaveProductAsync(
-                id,
-                dto);
+        try
+        {
+            var product = await _service.SaveProductAsync(id, dto);
 
-        return Ok(product);
+            return Ok(product);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new
+            {
+                message = ex.Message
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new
+            {
+                message = ex.Message
+            });
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            var entries = ex.Entries
+                .Select(x => new
+                {
+                    entity = x.Metadata.ClrType.Name,
+                    state = x.State.ToString()
+                })
+                .ToList();
+
+            return BadRequest(new
+            {
+                message = "Concurrency error while updating product.",
+                entities = entries
+            });
+        }
+        catch (DbUpdateException ex)
+        {
+            return BadRequest(new
+            {
+                message = "Database update failed.",
+                detail = ex.InnerException?.Message ?? ex.Message
+            });
+        }
     }
-
     [HttpDelete("products/{id:guid}")]
     public async Task<IActionResult> DeleteProduct(Guid id)
     {

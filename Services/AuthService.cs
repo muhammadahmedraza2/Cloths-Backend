@@ -146,11 +146,14 @@ public class AuthService : IAuthService
                 ? "User"
                 : user.Role.Trim();
 
-            if (role.Equals(
-                    "Administrator",
-                    StringComparison.OrdinalIgnoreCase))
+            if (role.Equals("Administrator", StringComparison.OrdinalIgnoreCase) ||
+      role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
             {
                 role = "Admin";
+            }
+            else if (role.Equals("User", StringComparison.OrdinalIgnoreCase))
+            {
+                role = "User";
             }
 
             user.Role = role;
