@@ -340,7 +340,19 @@ builder.Services.AddScoped<
     IMasterDataService,
     MasterDataService>();
 
-builder.Services.AddScoped<EcommerceService>();
+//builder.Services.AddScoped<EcommerceService>();
+builder.Services.AddScoped<NumberGenerator>();
+builder.Services.AddScoped<CatalogService>();
+builder.Services.AddScoped<ProductAdminService>();
+builder.Services.AddScoped<CartService>();
+builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<AddressService>();
+builder.Services.AddScoped<DashboardService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<PurchaseService>();
+builder.Services.AddScoped<SupplierService>();
+builder.Services.AddScoped<StockService>();
 
 builder.Services.AddScoped<
     IPaymentGateway,

@@ -16,12 +16,12 @@ namespace ClothingErp.Api.Controllers;
 [Authorize(Roles = "Admin")]
 public class AdminUsersController : ControllerBase
 {
-    private readonly EcommerceService _service;
+    private readonly UserService _service;
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
     public AdminUsersController(
-        EcommerceService service,
+        UserService service,
         UserManager<AppUser> userManager,
         RoleManager<IdentityRole<Guid>> roleManager)
     {

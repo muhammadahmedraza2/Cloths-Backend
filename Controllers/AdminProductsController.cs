@@ -16,10 +16,10 @@ namespace ClothingErp.Api.Controllers;
 [Authorize(Roles = "Admin")]
 public class AdminProductsController : ControllerBase
 {
-    private readonly EcommerceService _service;
+    private readonly ProductAdminService _service;
 
     public AdminProductsController(
-        EcommerceService service)
+        ProductAdminService service)
     {
         _service = service;
     }
@@ -86,6 +86,7 @@ public class AdminProductsController : ControllerBase
             });
         }
     }
+
     [HttpDelete("products/{id:guid}")]
     public async Task<IActionResult> DeleteProduct(Guid id)
     {

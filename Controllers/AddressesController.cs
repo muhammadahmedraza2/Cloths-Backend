@@ -11,8 +11,8 @@ namespace ClothingErp.Api.Controllers;
 [Authorize(Roles = "User")]
 public class AddressesController : ControllerBase
 {
-    private readonly EcommerceService _service;
-    public AddressesController(EcommerceService service) => _service = service;
+    private readonly AddressService _service;
+    public AddressesController(AddressService service) => _service = service;
     private Guid UserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     [HttpGet] public async Task<IActionResult> Get() => Ok(await _service.GetAddressesAsync(UserId));

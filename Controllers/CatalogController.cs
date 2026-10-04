@@ -9,16 +9,14 @@ namespace ClothingErp.Api.Controllers;
 [Route("api/catalog")]
 public class CatalogController : ControllerBase
 {
-    private readonly EcommerceService _service;
+    private readonly CatalogService _service;
 
-    public CatalogController(EcommerceService service)
+    public CatalogController(CatalogService service)
     {
         _service = service;
     }
 
-    // =========================================================
-    // PRODUCTS
-    // =========================================================
+    // ================= PRODUCTS =================
 
     [AllowAnonymous]
     [HttpGet("products")]
@@ -32,16 +30,15 @@ public class CatalogController : ControllerBase
         [FromQuery] Guid? colorId,
         [FromQuery] Guid? setTypeId)
     {
-        var result =
-            await _service.GetProductsAsync(
-                search,
-                departmentId,
-                categoryId,
-                gender,
-                ageGroupId,
-                sizeId,
-                colorId,
-                setTypeId);
+        var result = await _service.GetProductsAsync(
+            search,
+            departmentId,
+            categoryId,
+            gender,
+            ageGroupId,
+            sizeId,
+            colorId,
+            setTypeId);
 
         return Ok(result);
     }
@@ -50,8 +47,7 @@ public class CatalogController : ControllerBase
     [HttpGet("products/{id:guid}")]
     public async Task<IActionResult> Product(Guid id)
     {
-        var product =
-            await _service.GetProductAsync(id);
+        var product = await _service.GetProductAsync(id);
 
         if (product is null)
             return NotFound();
@@ -59,101 +55,40 @@ public class CatalogController : ControllerBase
         return Ok(product);
     }
 
-    // =========================================================
-    // CATEGORIES
-    // =========================================================
+    // ================= LOOKUPS =================
 
     [AllowAnonymous]
     [HttpGet("categories")]
-    public async Task<IActionResult> Categories()
-    {
-        var result =
-            await _service.GetCategoriesAsync();
-
-        return Ok(result);
-    }
-
-    // =========================================================
-    // BRANDS
-    // =========================================================
+    public async Task<IActionResult> Categories() =>
+        Ok(await _service.GetCategoriesAsync());
 
     [AllowAnonymous]
     [HttpGet("brands")]
-    public async Task<IActionResult> Brands()
-    {
-        var result =
-            await _service.GetBrandsAsync();
-
-        return Ok(result);
-    }
-
-    // =========================================================
-    // SIZES
-    // =========================================================
+    public async Task<IActionResult> Brands() =>
+        Ok(await _service.GetBrandsAsync());
 
     [AllowAnonymous]
     [HttpGet("sizes")]
-    public async Task<IActionResult> Sizes()
-    {
-        var result =
-            await _service.GetSizesAsync();
-
-        return Ok(result);
-    }
-
-    // =========================================================
-    // COLORS
-    // =========================================================
+    public async Task<IActionResult> Sizes() =>
+        Ok(await _service.GetSizesAsync());
 
     [AllowAnonymous]
     [HttpGet("colors")]
-    public async Task<IActionResult> Colors()
-    {
-        var result =
-            await _service.GetColorsAsync();
-
-        return Ok(result);
-    }
-
-    // =========================================================
-    // AGE GROUPS
-    // =========================================================
+    public async Task<IActionResult> Colors() =>
+        Ok(await _service.GetColorsAsync());
 
     [AllowAnonymous]
     [HttpGet("age-groups")]
-    public async Task<IActionResult> AgeGroups()
-    {
-        var result =
-            await _service.GetAgeGroupsAsync();
-
-        return Ok(result);
-    }
-
-    // =========================================================
-    // DEPARTMENTS
-    // =========================================================
+    public async Task<IActionResult> AgeGroups() =>
+        Ok(await _service.GetAgeGroupsAsync());
 
     [AllowAnonymous]
     [HttpGet("departments")]
-    public async Task<IActionResult> Departments()
-    {
-        var result =
-            await _service.GetDepartmentsAsync();
-
-        return Ok(result);
-    }
-
-    // =========================================================
-    // SET TYPES
-    // =========================================================
+    public async Task<IActionResult> Departments() =>
+        Ok(await _service.GetDepartmentsAsync());
 
     [AllowAnonymous]
     [HttpGet("set-types")]
-    public async Task<IActionResult> SetTypes()
-    {
-        var result =
-            await _service.GetSetTypesAsync();
-
-        return Ok(result);
-    }
+    public async Task<IActionResult> SetTypes() =>
+        Ok(await _service.GetSetTypesAsync());
 }

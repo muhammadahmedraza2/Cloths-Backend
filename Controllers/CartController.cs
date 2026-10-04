@@ -13,10 +13,10 @@ namespace ClothingErp.Api.Controllers;
 [Authorize]
 public class CartController : ControllerBase
 {
-    private readonly EcommerceService _service;
+    private readonly CartService _service;
 
     public CartController(
-        EcommerceService service)
+        CartService service)
     {
         _service = service;
     }
@@ -37,12 +37,11 @@ public class CartController : ControllerBase
             return id;
         }
     }
+
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var result =
-            await _service.GetCartAsync(
-                UserId);
+        var result = await _service.GetCartAsync(UserId);
 
         return Ok(result);
     }
@@ -51,10 +50,7 @@ public class CartController : ControllerBase
     public async Task<IActionResult> Add(
         [FromBody] AddToCartRequestDto dto)
     {
-        var result =
-            await _service.AddToCartAsync(
-                UserId,
-                dto);
+        var result = await _service.AddToCartAsync(UserId, dto);
 
         return Ok(result);
     }
@@ -64,23 +60,18 @@ public class CartController : ControllerBase
         Guid id,
         [FromBody] UpdateCartRequestDto dto)
     {
-        var result =
-            await _service.UpdateCartAsync(
-                UserId,
-                id,
-                dto.Quantity);
+        var result = await _service.UpdateCartAsync(
+            UserId,
+            id,
+            dto.Quantity);
 
         return Ok(result);
     }
 
     [HttpDelete("items/{id:guid}")]
-    public async Task<IActionResult> Remove(
-        Guid id)
+    public async Task<IActionResult> Remove(Guid id)
     {
-        var result =
-            await _service.RemoveCartItemAsync(
-                UserId,
-                id);
+        var result = await _service.RemoveCartItemAsync(UserId, id);
 
         return Ok(result);
     }
@@ -88,8 +79,7 @@ public class CartController : ControllerBase
     [HttpDelete("clear")]
     public async Task<IActionResult> Clear()
     {
-        await _service.ClearCartAsync(
-            UserId);
+        await _service.ClearCartAsync(UserId);
 
         return Ok(new
         {

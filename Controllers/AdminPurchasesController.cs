@@ -16,10 +16,10 @@ namespace ClothingErp.Api.Controllers;
 [Authorize(Roles = "Admin")]
 public class AdminPurchasesController : ControllerBase
 {
-    private readonly EcommerceService _service;
+    private readonly PurchaseService _service;
 
     public AdminPurchasesController(
-        EcommerceService service)
+        PurchaseService service)
     {
         _service = service;
     }

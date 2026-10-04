@@ -11,8 +11,8 @@ namespace ClothingErp.Api.Controllers;
 [Authorize(Roles = "User")]
 public class OrdersController : ControllerBase
 {
-    private readonly EcommerceService _service;
-    public OrdersController(EcommerceService service) => _service = service;
+    private readonly OrderService _service;
+    public OrdersController(OrderService service) => _service = service;
     private Guid UserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     [HttpPost] public async Task<IActionResult> Create(CreateOrderRequestDto dto) => Ok(await _service.CreateOrderAsync(UserId, dto));
